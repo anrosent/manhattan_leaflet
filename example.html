@@ -1,0 +1,67 @@
+<!DOCTYPE html>
+<html>
+<head>
+	<title>Leaflet Layers Control Example</title>
+	<meta charset="utf-8" />
+
+	<meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+	<link rel="stylesheet" href="leaflet/leaflet.css" />
+	<!--[if lte IE 8]><link rel="stylesheet" href="leaflet/leaflet.ie.css" /><![endif]-->
+</head>
+<body>
+	<div id="map" style="width: 600px; height: 400px"></div>
+
+	<script src="MNMAP_small.js" type="text/javascript"></script>
+	<script src="leaflet/leaflet.js"></script>
+
+	<script>
+        var geojson;
+        var clicked;
+
+        function highlightFeature(e){
+            var layer = e.target;
+
+            layer.setStyle({
+                weight:5,
+                color: '#F00',
+                dashArray: '',
+                fillOpacity: 0.7
+            });
+
+        }
+    
+        function resetHighlight(e){
+            geojson.resetStyle(e.target);
+        }
+
+        function featureAlert(e){
+            alert('You clicked the parcel at Lot ' + this.feature.properties.Lot + ' and Block ' + this.feature.properties.Block);   
+            highlightFeature(e);
+        }
+
+
+		var map = L.map('map').setView([40.808287, -73.9535236], 15);
+
+		L.tileLayer('http://{s}.tile.cloudmade.com/{key}/22677/256/{z}/{x}/{y}.png', {
+			attribution: 'Map data &copy; 2011 OpenStreetMap contributors, Imagery &copy; 2012 CloudMade',
+			key: 'BC9A493B41014CAABB98F0471D759707'
+		}).addTo(map);
+
+        function onEachFeature(feature, layer){
+           /* if (feature.properties){
+                layer.bindPopup('<a href="http://www.google.com">'+feature.properties.Lot + '_' + feature.properties.Block + '</a>');
+            } */
+
+            //feature.on({ click : alert(feature.properties.Lot)});
+
+            layer.on({
+                        mouseout : resetHighlight,
+                        click    : featureAlert,
+            });
+        }
+
+		geojson = L.geoJson(blocks, {onEachFeature: onEachFeature}).addTo(map);
+	</script>
+</body>
+</html>
